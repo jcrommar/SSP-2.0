@@ -2,9 +2,11 @@
 * @NScriptType UserEventScript
 * @NAPIVersion 2.0
 */
-define([],
-
-	function() {
+define(['N/record'],
+/**
+ * @param {record} record
+ */
+	function(record) {
 
 		return {
 			afterSubmit : function (context) {
@@ -12,12 +14,30 @@ define([],
 
 				var employee 		= context.newRecord;
 				var empCode 		= employee.getValue('custentity_sdr_employee_code');
-				var supervisorName 	= employee.getText('supervisor');
 				var supervisorId 	= employee.getValue('supervisor');
 
 				log.debug('Employee Code', empCode);
 				log.debug('Supervisor ID', supervisorId);
-				log.debug('Supervisor Name', supervisorName);
+
+				//MODULE 05 - Create phone call record.
+
+				if (context.type == context.UserEventType.CREATE) {
+					var phoneCall = record.create({
+						type : record.Type.PHONE_CALL,
+						defaultValues : {
+							customform : -150
+						}
+					});
+					
+					var title = phoneCall.getValue('title');
+					var phone = phoneCall.getValue('phone');
+					var assigned = phoneCall.getValue('assigned')
+
+					phoneCall.setValue('title', 'Call HR for benefits');
+					phoneCall.setValue('assigned', employee.id);
+					phoneCall.setValue('phone',  employee.phone);
+					phoneCall.save();
+				}
 			}
 		};
 	}); 
