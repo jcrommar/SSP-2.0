@@ -1,5 +1,5 @@
 /**
- * @NApiVersion 2.x
+ * @NApiVersion 2.0
  * @NScriptType ClientScript
  * @NModuleScope SameAccount
  */
@@ -16,8 +16,31 @@ function() {
      *
      * @since 2015.2
      */
-    function pageInit(scriptContext) {
+    function pageInit(context) {
+    	var employee = context.currentRecord;
 
+
+    	var perfRevCount = employee.getLineCount({
+    		sublistId : 'recmachcustrecord_sdr_perf_subordinate'
+    	});
+
+    	var notes = 'This employee has ' + perfRevCount + ' performance reviews.\n';
+
+    	var fRatingCount = 0;
+    	for (var i=0; i<perfRevCount; i++) {
+    		var ratingCode = employee.getSublistValue({
+				sublistId : 'recmachcustrecord_sdr_perf_subordinate',
+				fieldId : 'custrecord_sdr_perf_rating_code',
+				line : i
+    		});
+
+    		if (ratingCode == 'F') {
+    			fRatingCount += 1;
+    		}
+    	}
+    	notes += 'This employee has ' + fRatingCount + ' F - rated reviews';
+
+    	alert(notes);
     }
 
     /**
@@ -69,6 +92,7 @@ function() {
      * @since 2015.2
      */
     function sublistChanged(scriptContext) {
+    	
 
     }
 
@@ -182,7 +206,7 @@ function() {
     }
 
     return {
-//        pageInit: pageInit,
+        pageInit: pageInit,
         fieldChanged: fieldChanged,
 //        postSourcing: postSourcing,
 //        sublistChanged: sublistChanged,
