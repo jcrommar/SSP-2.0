@@ -37,6 +37,30 @@ define(['N/record'],
 					phoneCall.setValue('assigned', employee.id);
 					phoneCall.setValue('phone',  employee.phone);
 					phoneCall.save();
+
+					var event = record.create({
+						type : record.Type.EVENT,
+						isDynamic : true
+					});
+					event.setValue('title', 'Welcome meeting with supervisor');
+
+					event.selectNewLine({sublistId : 'attendee'});
+					event.setCurrentSublistValue({
+						sublistId : 'attendee',
+						fieldId : 'attendee',
+						value : employee.id
+					});
+					event.commitLine({sublistId : 'attendee'});
+
+					event.selectNewLine({sublistId : 'attendee'});
+					event.setCurrentSublistValue({
+						sublistId : 'attendee',
+						fieldId : 'attendee',
+						value : employee.getValue('supervisor')
+					});
+					event.commitLine({sublistId : 'attendee'});
+
+					event.save();
 				}
 			}
 		};
