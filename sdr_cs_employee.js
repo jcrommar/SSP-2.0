@@ -105,8 +105,23 @@ function() {
      *
      * @since 2015.2
      */
-    function lineInit(scriptContext) {
+    function lineInit(context) {
+        var employee = context.currentRecord;
 
+        if (context.sublistId == 'recmachcustrecord_sdr_perf_subordinate') {
+            var reviewType = employee.getCurrentSublistValue({
+                sublistId : 'recmachcustrecord_sdr_perf_subordinate',
+                fieldId : 'custrecord_sdr_perf_review_type' 
+            });
+
+            if (!reviewType) {
+                employee.setCurrentSublistValue({
+                    sublistId : 'recmachcustrecord_sdr_perf_subordinate',
+                    fieldId : 'custrecord_sdr_perf_review_type',
+                    value : 1 // 1 = Salary Change
+                })
+            }
+        }
     }
 
     /**
@@ -149,8 +164,22 @@ function() {
      *
      * @since 2015.2
      */
-    function validateLine(scriptContext) {
+    function validateLine(context) {
+        var employee = context.currentRecord;
 
+        if (context.sublistId = 'recmachcustrecord_sdr_perf_subordinate') {
+            var increaseAmount = employee.getCurrentSublistValue({
+                sublistId : 'recmachcustrecord_sdr_perf_subordinate',
+                fieldId : 'custrecord_sdr_perf_sal_incr_amt'
+            })
+
+            if (increaseAmount > 5000) {
+                alert('Salary Increase Amount cannot be greater than 5,000');
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -210,9 +239,9 @@ function() {
         fieldChanged: fieldChanged,
 //        postSourcing: postSourcing,
 //        sublistChanged: sublistChanged,
-//        lineInit: lineInit,
+        lineInit: lineInit,
         validateField: validateField,
-//        validateLine: validateLine,
+        validateLine: validateLine,
 //        validateInsert: validateInsert,
 //        validateDelete: validateDelete,
         saveRecord: saveRecord
